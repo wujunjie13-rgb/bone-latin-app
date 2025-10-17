@@ -1,0 +1,31 @@
+<!-- Favicon (replace with your file in /public) -->
+<link rel="icon" href="/favicon.ico" />
+
+<!-- Open Graph (optional, customize) -->
+<meta property="og:title" content="NeoBones Anatomy Atlas" />
+<meta property="og:description" content="Interactive skeletal atlas with English-Latin names, audio pronunciation, practice and exams." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="/og-image.png" />
+
+<!-- For Create React App: uncomment the following base if you use %PUBLIC_URL% -->
+<!-- <base href="%PUBLIC_URL%/"> -->
+
+<!-- If you use a static CSS file produced by Tailwind (e.g. /styles.css) include it here.
+     If you rely on the bundler to inject CSS, you can leave this out. -->
+<link rel="stylesheet" href="/styles.css" />
+
+<!-- Preconnect fonts (optional) -->
+<!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> -->
+<!-- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"> -->
+
+<!-- Small inline script to ensure dark background before React renders -->
+<script>
+  // Ensure page shows dark background immediately to avoid FOUC
+  (function () {
+    try {
+      document.documentElement.style.backgroundColor = "#0f172a";
+      document.documentElement.style.color = "#ffffff";
+    } catch (e) {}
+  })();
+</script>
+<!-- End head -->
