@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Osteologia - 人体骨骼解剖学学习</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36BFFA',
+            accent: '#FF7D00',
+            neutral: '#F5F7FA',
+            dark: '#1D2129',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            latin: ['Times New Roman', 'serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .bone-card {
+        @apply bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl;
+      }
+      .btn-primary {
+        @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50;
+      }
+      .btn-secondary {
+        @apply bg-neutral text-dark px-4 py-2 rounded-lg hover:bg-neutral/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral;
+      }
+      .btn-accent {
+        @apply bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/50;
+      }
+      .lang-btn {
+        @apply px-3 py-1 rounded-full text-sm transition-all duration-200;
+      }
+      .lang-btn.active {
+        @apply bg-primary text-white;
+      }
+      .lang-btn:not(.active) {
+        @apply bg-neutral hover:bg-neutral/80;
+      }
+      .option-btn {
+        @apply w-full text-left p-3 border border-gray-200 rounded-lg mb-2 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer;
+      }
+      .option-btn.correct {
+        @apply border-green-500 bg-green-50;
+      }
+      .option-btn.incorrect {
+        @apply border-red-500 bg-red-50;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-dark min-h-screen">
+  <!-- 顶部导航 -->
+  <header class="bg-white shadow-sm sticky top-0 z-10">
+    <div class="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-bone text-primary text-2xl"></i>
+        <h1 class="text-xl md:text-2xl font-bold text-primary">Osteologia</h1>
+      </div>
+      
+      <!-- 语言切换 -->
+      <div class="flex items-center space-x-2 order-3 md:order-2">
+        <button id="lang-zh" class="lang-btn active">中文</button>
+        <button id="lang-en" class="lang-btn">English</button>
+      </div>
+      
+      <nav class="hidden md:flex items-center space-x-6 order-2 md:order-3">
+        <a href="#" class="text-primary font-medium" data-i18n="practice">练习</a>
+        <a href="#" class="text-gray-600 hover:text-primary transition-colors" data-i18n="bone-list">骨骼列表</a>
+        <a href="#" class="text-gray-600 hover:text-primary transition-colors" data-i18n="quiz">测验模式</a>
+        <a href="#" class="text-gray-600 hover:text-primary transition-colors" data-i18n="statistics">学习统计</a>
+        <a href="#" class="text-gray-600 hover:text-primary transition-colors" data-i18n="resources">解剖学资源</a>
+      </nav>
+      
+      <button class="md:hidden text-gray-600 order-4" id="mobile-menu-btn">
+        <i class="fa fa-bars text-xl"></i>
+      </button>
+    </div>
+    
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+      <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+        <a href="#" class="py-2 text-primary font-medium" data-i18n="practice">练习</a>
+        <a href="#" class="py-2 text-gray-600 hover:text-primary transition-colors" data-i18n="bone-list">骨骼列表</a>
+        <a href="#" class="py-2 text-gray-600 hover:text-primary transition-colors" data-i18n="quiz">测验模式</a>
+        <a href="#" class="py-2 text-gray-600 hover:text-primary transition-colors" data-i18n="statistics">学习统计</a>
+        <a href="#" class="py-2 text-gray-600 hover:text-primary transition-colors" data-i18n="resources">解剖学资源</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要内容 -->
+  <main class="container mx-auto px-4 py-8 md:py-12">
+    <!-- 模式切换 -->
+    <section class="mb-8">
+      <div class="flex flex-wrap gap-2 justify-center">
+        <button id="study-mode-btn" class="btn-primary flex items-center gap-2">
+          <i class="fa fa-book"></i> <span data-i18n="study-mode">学习模式</span>
+        </button>
+        <button id="quiz-mode-btn" class="btn-secondary flex items-center gap-2">
+          <i class="fa fa-question-circle"></i> <span data-i18n="quiz-mode">测验模式</span>
+        </button>
+      </div>
+    </section>
+    
+    <!-- 页面介绍 -->
+    <section class="text-center mb-12">
+      <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4" data-i18n="page-title">人体骨骼解剖学练习</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto" data-i18n="page-description">通过图片识别学习人体骨骼结构，点击下方按钮查看答案或获取新的骨骼图片进行练习。</p>
+    </section>
+    
+    <!-- 学习模式内容 -->
+    <section id="study-mode" class="max-w-3xl mx-auto mb-10">
+      <div class="bone-card">
+        <!-- 骨骼图片 -->
+        <div class="relative bg-neutral aspect-[4/3] overflow-hidden">
+          <img id="bone-image" src="https://picsum.photos/id/1082/800/600" alt="人体骨骼图片" class="w-full h-full object-cover transition-opacity duration-500">
+          <div id="loading-indicator" class="absolute inset-0 flex items-center justify-center bg-white/80 hidden">
+            <i class="fa fa-circle-o-notch fa-spin text-3xl text-primary"></i>
+          </div>
+          <!-- 发音按钮 -->
+          <button id="pronounce-btn" class="absolute bottom-4 right-4 bg-white/80 hover:bg-white text-primary rounded-full w-10 h-10 flex items-center justify-center shadow-md transition-all">
+            <i class="fa fa-volume-up"></i>
+          </button>
+        </div>
+        
+        <!-- 骨骼名称区域 -->
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold" data-i18n="bone-name">骨骼名称</h3>
+            <span id="bone-category" class="text-sm bg-primary/10 text-primary px-2 py-1 rounded-full">下肢骨</span>
+          </div>
+          
+          <!-- 答案区域 -->
+          <div id="answer-container" class="mb-6">
+            <div id="answer-hidden" class="bg-neutral h-12 rounded-lg flex items-center justify-center text-gray-500" data-i18n="click-to-reveal">
+              点击"显示答案"查看骨骼拉丁语名称
+            </div>
+            <div id="answer-shown" class="hidden">
+              <p class="text-center text-2xl md:text-3xl font-latin font-bold text-primary mb-2" id="latin-name">Tibia</p>
+              <p class="text-center text-gray-600" id="common-name">胫骨</p>
+            </div>
+          </div>
+          
+          <!-- 骨骼详细说明 -->
+          <div id="bone-details" class="mb-6 hidden bg-neutral p-4 rounded-lg">
+            <h4 class="font-semibold mb-2" data-i18n="bone-description">骨骼说明</h4>
+            <p class="text-gray-700 text-sm" id="bone-description-text">胫骨是小腿内侧的长骨，是下肢主要承重骨之一，连接股骨和踝骨。</p>
+          </div>
+          
+          <!-- 操作按钮 -->
+          <div class="flex flex-wrap gap-3 justify-center">
+            <button id="show-answer" class="btn-primary flex items-center gap-2">
+              <i class="fa fa-eye"></i> <span data-i18n="show-answer">显示答案</span>
+            </button>
+            <button id="show-details" class="btn-secondary flex items-center gap-2">
+              <i class="fa fa-info-circle"></i> <span data-i18n="show-details">详细说明</span>
+            </button>
+            <button id="new-bone" class="btn-secondary flex items-center gap-2">
+              <i class="fa fa-refresh"></i> <span data-i18n="new-bone">新骨骼</span>
+            </button>
+            <button id="save-bone" class="btn-secondary flex items-center gap-2">
+              <i class="fa fa-bookmark-o"></i> <span data-i18n="save">收藏</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 测验模式内容 (默认隐藏) -->
+    <section id="quiz-mode" class="max-w-3xl mx-auto mb-10 hidden">
+      <div class="bone-card">
+        <!-- 骨骼图片 -->
+        <div class="relative bg-neutral aspect-[4/3] overflow-hidden">
+          <img id="quiz-bone-image" src="https://picsum.photos/id/1082/800/600" alt="人体骨骼图片" class="w-full h-full object-cover">
+        </div>
+        
+        <!-- 测验内容区域 -->
+        <div class="p-6">
+          <h3 class="text-lg font-semibold mb-4 text-center" data-i18n="identify-bone">请识别这是哪块骨骼（拉丁语名称）</h3>
+          
+          <!-- 选项区域 -->
+          <div id="quiz-options" class="mb-6 space-y-2">
+            <!-- 选项将通过JS动态生成 -->
+          </div>
+          
+          <!-- 结果反馈 (默认隐藏) -->
+          <div id="quiz-feedback" class="mb-6 hidden p-4 rounded-lg">
+            <p id="feedback-text" class="text-center"></p>
+            <p class="text-center mt-2 font-latin font-bold text-primary" id="correct-answer"></p>
+            <p class="text-center text-sm text-gray-600 mt-1" id="answer-translation"></p>
+          </div>
+          
+          <!-- 操作按钮 -->
+          <div class="flex flex-wrap gap-3 justify-center">
+            <button id="check-answer" class="btn-accent flex items-center gap-2 hidden">
+              <i class="fa fa-check"></i> <span data-i18n="check-answer">检查答案</span>
+            </button>
+            <button id="next-quiz" class="btn-primary flex items-center gap-2 hidden">
+              <i class="fa fa-arrow-right"></i> <span data-i18n="next-question">下一题</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 学习进度和统计 -->
+    <section class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      <!-- 学习进度 -->
+      <div class="bg-white rounded-xl shadow p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+          <i class="fa fa-line-chart text-primary mr-2"></i> <span data-i18n="progress">学习进度</span>
+        </h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-neutral rounded-lg p-4 text-center">
+            <p class="text-gray-500 text-sm mb-1" data-i18n="learned-bones">已学习骨骼</p>
+            <p class="text-2xl font-bold text-primary" id="learned-count">12/206</p>
+          </div>
+          <div class="bg-neutral rounded-lg p-4 text-center">
+            <p class="text-gray-500 text-sm mb-1" data-i18n="today-learned">今日学习</p>
+            <p class="text-2xl font-bold text-primary" id="today-count">3</p>
+          </div>
+          <div class="bg-neutral rounded-lg p-4 text-center">
+            <p class="text-gray-500 text-sm mb-1" data-i18n="saved-bones">收藏骨骼</p>
+            <p class="text-2xl font-bold text-primary" id="saved-count">2</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="w-full bg-gray-200 rounded-full h-2.5">
+            <div class="bg-primary h-2.5 rounded-full" style="width: 6%"></div>
+          </div>
+          <p class="text-xs text-gray-500 mt-1 text-right" data-i18n="overall-progress">总体进度: 6%</p>
+        </div>
+      </div>
+      
+      <!-- 测验统计 -->
+      <div class="bg-white rounded-xl shadow p-6">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+          <i class="fa fa-bar-chart text-accent mr-2"></i> <span data-i18n="quiz-stats">测验统计</span>
+        </h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-neutral rounded-lg p-4 text-center">
+            <p class="text-gray-500 text-sm mb-1" data-i18n="total-quizzes">总测验数</p>
+            <p class="text-2xl font-bold text-accent" id="total-quizzes">15</p>
+          </div>
+          <div class="bg-neutral rounded-lg p-4 text-center">
+            <p class="text-gray-500 text-sm mb-1" data-i18n="correct-answers">正确答案</p>
+            <p class="text-2xl font-bold text-accent" id="correct-answers">12</p>
+          </div>
+          <div class="bg-neutral rounded-lg p-4 text-center">
+            <p class="text-gray-500 text-sm mb-1" data-i18n="accuracy">正确率</p>
+            <p class="text-2xl font-bold text-accent" id="accuracy">80%</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <canvas id="progress-chart" width="400" height="100"></canvas>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 快速导航 -->
+    <section class="max-w-5xl mx-auto mb-12">
+      <h3 class="text-lg font-semibold mb-4 flex items-center">
+        <i class="fa fa-th text-primary mr-2"></i> <span data-i18n="bone-regions">骨骼区域</span>
+      </h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+        <button class="bone-region-btn bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-primary hover:text-primary transition-colors" data-region="all">
+          <i class="fa fa-cubes text-xl mb-1"></i>
+          <p class="text-sm" data-i18n="all-bones">全部骨骼</p>
+        </button>
+        <button class="bone-region-btn bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-primary hover:text-primary transition-colors" data-region="category-skull">
+          <i class="fa fa-user-circle-o text-xl mb-1"></i>
+          <p class="text-sm" data-i18n="skull">颅骨</p>
+        </button>
+        <button class="bone-region-btn bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-primary hover:text-primary transition-colors" data-region="category-spine">
+          <i class="fa fa-arrows-v text-xl mb-1"></i>
+          <p class="text-sm" data-i18n="spine">脊柱</p>
+        </button>
+        <button class="bone-region-btn bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-primary hover:text-primary transition-colors" data-region="category-thorax">
+          <i class="fa fa-shield text-xl mb-1"></i>
+          <p class="text-sm" data-i18n="thorax">胸廓</p>
+        </button>
+        <button class="bone-region-btn bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-primary hover:text-primary transition-colors" data-region="category-upper">
+          <i class="fa fa-hand-paper-o text-xl mb-1"></i>
+          <p class="text-sm" data-i18n="upper-limbs">上肢骨</p>
+        </button>
+        <button class="bone-region-btn bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-primary hover:text-primary transition-colors" data-region="category-lower">
+          <i class="fa fa-male text-xl mb-1"></i>
+          <p class="text-sm" data-i18n="lower-limbs">下肢骨</p>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-dark text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center space-x-2 mb-4 md:mb-0">
+          <i class="fa fa-bone text-primary text-2xl"></i>
+          <h2 class="text-xl font-bold">Osteologia</h2>
+        </div>
+        <div class="flex space-x-6 mb-4 md:mb-0">
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa fa-facebook"></i></a>
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa fa-twitter"></i></a>
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa fa-instagram"></i></a>
+          <a href="#" class="hover:text-primary transition-colors"><i class="fa fa-youtube-play"></i></a>
+        </div>
+        <p class="text-gray-400 text-sm" data-i18n="copyright">© 2023 Osteologia. 解剖学学习工具</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Chart.js 用于统计图表 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <script>
+    // 语言包
+    const translations = {
+      zh: {
+        "practice": "练习",
+        "bone-list": "骨骼列表",
+        "quiz": "测验模式",
+        "statistics": "学习统计",
+        "resources": "解剖学资源",
+        "page-title": "人体骨骼解剖学练习",
+        "page-description": "通过图片识别学习人体骨骼结构，点击下方按钮查看答案或获取新的骨骼图片进行练习。",
+        "bone-name": "骨骼名称",
+        "click-to-reveal": "点击\"显示答案\"查看骨骼拉丁语名称",
+        "show-answer": "显示答案",
+        "new-bone": "新骨骼",
+        "save": "收藏",
+        "progress": "学习进度",
+        "learned-bones": "已学习骨骼",
+        "today-learned": "今日学习",
+        "saved-bones": "收藏骨骼",
+        "overall-progress": "总体进度: 6%",
+        "bone-regions": "骨骼区域",
+        "skull": "颅骨",
+        "spine": "脊柱",
+        "thorax": "胸廓",
+        "upper-limbs": "上肢骨",
+        "lower-limbs": "下肢骨",
+        "full-skeleton": "全身骨骼",
+        "all-bones": "全部骨骼",
+        "copyright": "© 2023 Osteologia. 解剖学学习工具",
+        "category-skull": "颅骨",
+        "category-spine": "脊柱",
+        "category-thorax": "胸廓",
+        "category-upper": "上肢骨",
+        "category-lower": "下肢骨",
+        "study-mode": "学习模式",
+        "quiz-mode": "测验模式",
+        "identify-bone": "请识别这是哪块骨骼（拉丁语名称）",
+        "check-answer": "检查答案",
+        "next-question": "下一题",
+        "correct": "正确！",
+        "incorrect": "不正确",
+        "bone-description": "骨骼说明",
+        "show-details": "详细说明",
+        "quiz-stats": "测验统计",
+        "total-quizzes": "总测验数",
+        "correct-answers": "正确答案",
+        "accuracy": "正确率",
+        "pronounce": "发音"
+      },
+      en: {
+        "practice": "Practice",
+        "bone-list": "Bone List",
+        "quiz": "Quiz Mode",
+        "statistics": "Statistics",
+        "resources": "Anatomy Resources",
+        "page-title": "Human Skeleton Anatomy Practice",
+        "page-description": "Learn human bone structures through image recognition. Click the buttons below to check answers or get new bone images for practice.",
+        "bone-name": "Bone Name",
+        "click-to-reveal": "Click \"Show Answer\" to view the Latin name of the bone",
+        "show-answer": "Show Answer",
+        "new-bone": "New Bone",
+        "save": "Save",
+        "progress": "Learning Progress",
+        "learned-bones": "Bones Learned",
+        "today-learned": "Learned Today",
+        "saved-bones": "Saved Bones",
+        "overall-progress": "Overall Progress: 6%",
+        "bone-regions": "Bone Regions",
+        "skull": "Skull",
+        "spine": "Spine",
+        "thorax": "Thorax",
+        "upper-limbs": "Upper Limbs",
+        "lower-limbs": "Lower Limbs",
+        "full-skeleton": "Full Skeleton",
+        "all-bones": "All Bones",
+        "copyright": "© 2023 Osteologia. Anatomy Learning Tool",
+        "category-skull": "Skull",
+        "category-spine": "Spine",
+        "category-thorax": "Thorax",
+        "category-upper": "Upper Limbs",
+        "category-lower": "Lower Limbs",
+        "study-mode": "Study Mode",
+        "quiz-mode": "Quiz Mode",
+        "identify-bone": "Please identify this bone (Latin name)",
+        "check-answer": "Check Answer",
+        "next-question": "Next Question",
+        "correct": "Correct!",
+        "incorrect": "Incorrect",
+        "bone-description": "Bone Description",
+        "show-details": "Show Details",
+        "quiz-stats": "Quiz Statistics",
+        "total-quizzes": "Total Quizzes",
+        "correct-answers": "Correct Answers",
+        "accuracy": "Accuracy",
+        "pronounce": "Pronounce"
+      }
+    };
+    
+    // 扩展骨骼数据 - 增加更多骨骼和详细说明
+    const bones = [
+      {
+        latin: "Tibia",
+        common: { zh: "胫骨", en: "Tibia" },
+        category: "category-lower",
+        imageId: 1082,
+        description: {
+          zh: "胫骨是小腿内侧的长骨，是下肢主要承重骨之一，连接股骨和踝骨。它比腓骨粗且坚固，在人体直立和行走时承受大部分体重。",
+          en: "The tibia is the larger, stronger, and anterior (frontal) of the two bones in the leg below the knee in vertebrates, and it connects the knee with the ankle bones."
+        }
+      },
+      {
+        latin: "Femur",
+        common: { zh: "股骨", en: "Femur" },
+        category: "category-lower",
+        imageId: 1081,
+        description: {
+          zh: "股骨是人体最长、最粗壮的长骨，位于大腿部，连接髋关节和膝关节。它承受着身体的大部分重量，在行走和跑步中起重要作用。",
+          en: "The femur is the thigh bone, the longest and strongest bone in the human body. It connects the hip to the knee and supports the weight of the body during movement."
+        }
+      },
+      {
+        latin: "Humerus",
+        common: { zh: "肱骨", en: "Humerus" },
+        category: "category-upper",
+        imageId: 1080,
+        description: {
+          zh: "肱骨是上臂唯一的长骨，连接肩胛骨和前臂的尺骨、桡骨，参与肩关节和肘关节的构成，使手臂能够进行多种运动。",
+          en: "The humerus is the long bone in the upper arm, running from the shoulder to the elbow. It connects the scapula to the radius and ulna, allowing for a wide range of arm movements."
+        }
+      },
+      {
+        latin: "Radius",
+        common: { zh: "桡骨", en: "Radius" },
+        category: "category-upper",
+        imageId: 1079,
+        description: {
+          zh: "桡骨是前臂双骨之一，位于拇指侧，与尺骨平行排列。它参与肘关节和腕关节的构成，在旋前和旋后运动中起重要作用。",
+          en: "The radius is one of the two large bones of the forearm, the other being the ulna. It is located on the lateral side of the forearm and contributes to the elbow and wrist joints."
+        }
+      },
+      {
+        latin: "Ulna",
+        common: { zh: "尺骨", en: "Ulna" },
+        category: "category-upper",
+        imageId: 1078,
+        description: {
+          zh: "尺骨是前臂内侧的长骨，与桡骨共同组成前臂骨架。它较长且较粗，在肘关节处与肱骨相连，在腕关节处形成尺骨茎突。",
+          en: "The ulna is one of the two long bones in the forearm, located on the medial side, opposite to the radius. It articulates with the humerus at the elbow and helps form the wrist joint."
+        }
+      },
+      {
+        latin: "Vertebra",
+        common: { zh: "脊椎骨", en: "Vertebra" },
+        category: "category-spine",
+        imageId: 1077,
+        description: {
+          zh: "脊椎骨是构成脊柱的骨骼，人体共有33块。它们连接形成一个灵活的柱状结构，保护脊髓，支撑头部和躯干，并允许身体进行弯曲和旋转。",
+          en: "Vertebrae are the 33 individual bones that interlock with each other to form the spinal column. They protect the spinal cord, support the head and trunk, and allow for movement."
+        }
+      },
+      {
+        latin: "Sternum",
+        common: { zh: "胸骨", en: "Sternum" },
+        category: "category-thorax",
+        imageId: 1076,
+        description: {
+          zh: "胸骨是位于胸前壁正中的扁骨，自上而下分为胸骨柄、胸骨体和剑突三部分。它与肋骨和锁骨相连，构成胸廓的前壁，保护胸腔内器官。",
+          en: "The sternum or breastbone is a long flat bone located in the central part of the chest. It connects to the ribs via cartilage and forms the front of the rib cage, protecting the heart and lungs."
+        }
+      },
+      {
+        latin: "Cranium",
+        common: { zh: "颅骨", en: "Cranium" },
+        category: "category-skull",
+        imageId: 1075,
+        description: {
+          zh: "颅骨由8块骨头组成，形成容纳和保护大脑的骨性腔隙。它们通过骨缝连接在一起，构成头部的骨架，保护脑部并支持面部结构。",
+          en: "The cranium is the part of the skull that encloses the brain. It consists of eight bones that are fused together to form a protective case around the brain."
+        }
+      },
+      {
+        latin: "Fibula",
+        common: { zh: "腓骨", en: "Fibula" },
+        category: "category-lower",
+        imageId: 1074,
+        description: {
+          zh: "腓骨是小腿外侧的长骨，较细，不直接承重，主要功能是提供肌肉附着点，并与胫骨和距骨共同构成踝关节。",
+          en: "The fibula is a long, thin bone located on the lateral side of the leg, parallel to the tibia. It provides attachment points for muscles and helps stabilize the ankle joint."
+        }
+      },
+      {
+        latin: "Clavicula",
+        common: { zh: "锁骨", en: "Clavicle" },
+        category: "category-upper",
+        imageId: 1073,
+        description: {
+          zh: "锁骨是连接胸骨和肩胛骨的S形长骨，位于颈部和胸部之间。它支撑上肢，使手臂能够远离躯干活动，并保护颈部大血管和神经。",
+          en: "The clavicle or collarbone is a long bone that connects the sternum to the scapula. It supports the arm and allows it to move away from the body, protecting underlying neurovascular structures."
+        }
+      },
+      {
+        latin: "Scapula",
+        common: { zh: "肩胛骨", en: "Scapula" },
+        category: "category-upper",
+        imageId: 1072,
+        description: {
+          zh: "肩胛骨是位于背部上外侧的扁平骨，与锁骨和肱骨相连，构成肩关节。它为许多肩部肌肉提供附着点，使手臂能够进行广泛的运动。",
+          en: "The scapula or shoulder blade is a flat triangular bone located on the posterior side of the shoulder. It connects with the humerus and clavicle to form the shoulder joint."
+        }
+      },
+      {
+        latin: "Mandibula",
+        common: { zh: "下颌骨", en: "Mandible" },
+        category: "category-skull",
+        imageId: 1071,
+        description: {
+          zh: "下颌骨是颅骨中唯一可活动的骨头，构成面部的下颌部分。它支撑下牙，参与咀嚼、说话和吞咽等功能。",
+          en: "The mandible or lower jaw is the largest, strongest and lowest bone in the human skull. It forms the lower jaw and holds the lower teeth in place, enabling chewing and speech."
+        }
+      },
+      {
+        latin: "Ribs",
+        common: { zh: "肋骨", en: "Ribs" },
+        category: "category-thorax",
+        imageId: 1070,
+        description: {
+          zh: "人体有12对肋骨，它们与胸椎和胸骨相连，构成胸廓。肋骨保护胸腔内的心脏、肺等器官，并在呼吸过程中起重要作用。",
+          en: "The ribs are a set of 12 paired bones that form the protective cage of the thorax. They protect the thoracic organs and play a crucial role in the respiratory mechanism."
+        }
+      },
+      {
+        latin: "Pelvis",
+        common: { zh: "骨盆", en: "Pelvis" },
+        category: "category-lower",
+        imageId: 1069,
+        description: {
+          zh: "骨盆由髋骨、骶骨和尾骨组成，是连接躯干和下肢的重要结构。它支撑上半身的重量，保护盆腔内器官，并为下肢肌肉提供附着点。",
+          en: "The pelvis is a basin-shaped structure that supports the spinal column and protects the abdominal organs. It connects the trunk and the legs, supporting the weight of the upper body."
+        }
+      },
+      {
+        latin: "Metacarpus",
+        common: { zh: "掌骨", en: "Metacarpals" },
+        category: "category-upper",
+        imageId: 1068,
+        description: {
+          zh: "掌骨是手部的长骨，共有5根，连接腕骨和指骨。它们构成手掌的骨架，使手能够进行抓握和精细动作。",
+          en: "The metacarpals are long bones in the hand that connect the carpal bones of the wrist to the phalanges of the fingers. They form the skeleton of the palm and allow for gripping movements."
+        }
+      }
+    ];
+    
+    // 当前状态变量
+    let currentLang = 'zh';
+    let currentBoneIndex = 0;
+    let answerVisible = false;
+    let detailsVisible = false;
+    let currentMode = 'study'; // 'study' 或 'quiz'
+    let selectedQuizOption = null;
+    let currentRegion = 'all'; // 用于筛选骨骼区域
+    let quizStats = {
+      total: 15,
+      correct: 12,
+      streak: 3
+    };
+    
+    // DOM 元素
+    const boneImage = document.getElementById('bone-image');
+    const quizBoneImage = document.getElementById('quiz-bone-image');
+    const latinName = document.getElementById('latin-name');
+    const commonName = document.getElementById('common-name');
+    const boneCategory = document.getElementById('bone-category');
+    const answerHidden = document.getElementById('answer-hidden');
+    const answerShown = document.getElementById('answer-shown');
+    const showAnswerBtn = document.getElementById('show-answer');
+    const showDetailsBtn = document.getElementById('show-details');
+    const boneDetails = document.getElementById('bone-details');
+    const boneDescriptionText = document.getElementById('bone-description-text');
+    const newBoneBtn = document.getElementById('new-bone');
+    const saveBoneBtn = document.getElementById('save-bone');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const langZhBtn = document.getElementById('lang-zh');
+    const langEnBtn = document.getElementById('lang-en');
+    const studyModeBtn = document.getElementById('study-mode-btn');
+    const quizModeBtn = document.getElementById('quiz-mode-btn');
+    const studyMode = document.getElementById('study-mode');
+    const quizMode = document.getElementById('quiz-mode');
+    const quizOptions = document.getElementById('quiz-options');
+    const checkAnswerBtn = document.getElementById('check-answer');
+    const nextQuizBtn = document.getElementById('next-quiz');
+    const quizFeedback = document.getElementById('quiz-feedback');
+    const feedbackText = document.getElementById('feedback-text');
+    const correctAnswer = document.getElementById('correct-answer');
+    const answerTranslation = document.getElementById('answer-translation');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const pronounceBtn = document.getElementById('pronounce-btn');
+    const boneRegionBtns = document.querySelectorAll('.bone-region-btn');
+    
+    // 统计数据元素
+    const learnedCountEl = document.getElementById('learned-count');
+    const todayCountEl = document.getElementById('today-count');
+    const savedCountEl = document.getElementById('saved-count');
+    const totalQuizzesEl = document.getElementById('total-quizzes');
+    const correctAnswersEl = document.getElementById('correct-answers');
+    const accuracyEl = document.getElementById('accuracy');
+    
+    // 初始化图表
+    let progressChart;
+    function initChart() {
+      const ctx = document.getElementById('progress-chart').getContext('2d');
+      progressChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          datasets: [{
+            label: translations[currentLang]['correct-answers'],
+            data: [2, 3, 1, 0, 2, 2, 2],
+            borderColor: '#FF7D00',
+            backgroundColor: 'rgba(255, 125, 0, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // 切换语言
+    function switchLanguage(lang) {
+      if (lang === currentLang) return;
+      
+      // 更新当前语言
+      currentLang = lang;
+      
+      // 更新语言按钮状态
+      langZhBtn.classList.toggle('active', lang === 'zh');
+      langEnBtn.classList.toggle('active', lang === 'en');
+      
+      // 更新页面文本
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+      
+      // 更新图表
+      if (progressChart) {
+        progressChart.data.datasets[0].label = translations[currentLang]['correct-answers'];
+        progressChart.data.labels = currentLang === 'zh' 
+          ? ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        progressChart.update();
+      }
+      
+      // 更新当前骨骼信息
+      updateBoneInfo();
+      
+      // 如果在测验模式，更新选项文本
+      if (currentMode === 'quiz') {
+        updateQuizOptionsText();
+      }
+    }
+    
+    // 更新骨骼信息（根据当前语言）
+    function updateBoneInfo() {
+      const bone = bones[currentBoneIndex];
+      commonName.textContent = bone.common[currentLang];
+      boneCategory.textContent = translations[currentLang][bone.category];
+      boneDescriptionText.textContent = bone.description[currentLang];
+    }
+    
+    // 显示当前骨骼（学习模式）
+    function displayCurrentBone() {
+      const bone = bones[currentBoneIndex];
+      boneImage.src = `https://picsum.photos/id/${bone.imageId}/800/600`;
+      latinName.textContent = bone.latin;
+      
+      // 根据当前语言更新信息
+      updateBoneInfo();
+      
+      // 重置答案显示状态
+      answerVisible = false;
+      detailsVisible = false;
+      answerHidden.classList.remove('hidden');
+      answerShown.classList.add('hidden');
+      boneDetails.classList.add('hidden');
+      showAnswerBtn.querySelector('span').textContent = translations[currentLang]["show-answer"];
+      showDetailsBtn.querySelector('span').textContent = translations[currentLang]["show-details"];
+    }
+    
+    // 显示答案
+    showAnswerBtn.addEventListener('click', () => {
+      if (!answerVisible) {
+        answerHidden.classList.add('hidden');
+        answerShown.classList.remove('hidden');
+        showAnswerBtn.querySelector('span').textContent = translations[currentLang]["show-answer"].replace("显示", "隐藏").replace("Show", "Hide");
+        answerVisible = true;
+      } else {
+        answerHidden.classList.remove('hidden');
+        answerShown.classList.add('hidden');
+        showAnswerBtn.querySelector('span').textContent = translations[currentLang]["show-answer"];
+        answerVisible = false;
+      }
+    });
+    
+    // 显示/隐藏详细说明
+    showDetailsBtn.addEventListener('click', () => {
+      if (!detailsVisible) {
+        boneDetails.classList.remove('hidden');
+        showDetailsBtn.querySelector('span').textContent = translations[currentLang]["show-details"].replace("显示", "隐藏").replace("Show", "Hide");
+        detailsVisible = true;
+      } else {
+        boneDetails.classList.add('hidden');
+        showDetailsBtn.querySelector('span').textContent = translations[currentLang]["show-details"];
+        detailsVisible = false;
+      }
+    });
+    
+    // 发音功能
+    pronounceBtn.addEventListener('click', () => {
+      const bone = bones[currentBoneIndex];
+      // 使用Web Speech API朗读拉丁语名称
+      const utterance = new SpeechSynthesisUtterance(bone.latin);
+      utterance.lang = 'la'; // 拉丁语
+      speechSynthesis.speak(utterance);
+    });
+    
+    // 加载新骨骼
+    newBoneBtn.addEventListener('click', () => {
+      loadNewBone();
+    });
+    
+    // 加载新骨骼的通用函数
+    function loadNewBone() {
+      // 显示加载状态
+      loadingIndicator.classList.remove('hidden');
+      boneImage.style.opacity = '0.5';
+      
+      // 根据当前区域筛选骨骼
+      let filteredBones = currentRegion === 'all' 
+        ? bones 
+        : bones.filter(bone => bone.category === currentRegion);
+      
+      // 随机选择一个不同的骨骼
+      let newIndex;
+      do {
+        newIndex = Math.floor(Math.random() * filteredBones.length);
+      } while (filteredBones[newIndex] === bones[currentBoneIndex] && filteredBones.length > 1);
+      
+      // 找到在原始数组中的索引
+      currentBoneIndex = bones.indexOf(filteredBones[newIndex]);
+      
+      // 模拟加载延迟
+      setTimeout(() => {
+        if (currentMode === 'study') {
+          displayCurrentBone();
+        } else {
+          setupQuiz();
+        }
+        // 隐藏加载状态
+        loadingIndicator.classList.add('hidden');
+        boneImage.style.opacity = '1';
+        
+        // 添加过渡动画
+        boneImage.classList.add('scale-105');
+        setTimeout(() => {
+          boneImage.classList.remove('scale-105');
+        }, 300);
+      }, 600);
+    }
+    
+    // 收藏功能
+    saveBoneBtn.addEventListener('click', () => {
+      const isSaved = saveBoneBtn.classList.contains('text-accent');
+      
+      if (isSaved) {
+        saveBoneBtn.classList.remove('text-accent');
+        saveBoneBtn.innerHTML = `<i class="fa fa-bookmark-o"></i> <span data-i18n="save">${translations[currentLang]["save"]}</span>`;
+        // 更新统计
+        updateStats('saved', -1);
+      } else {
+        saveBoneBtn.classList.add('text-accent');
+        saveBoneBtn.innerHTML = `<i class="fa fa-bookmark"></i> <span data-i18n="save">${translations[currentLang]["save"].replace("收藏", "已收藏").replace("Save", "Saved")}</span>`;
+        // 添加收藏动画
+        saveBoneBtn.classList.add('scale-110');
+        setTimeout(() => {
+          saveBoneBtn.classList.remove('scale-110');
+        }, 200);
+        // 更新统计
+        updateStats('saved', 1);
+      }
+    });
+    
+    // 更新统计数据
+    function updateStats(type, change) {
+      let learned = parseInt(learnedCountEl.textContent);
+      let today = parseInt(todayCountEl.textContent);
+      let saved = parseInt(savedCountEl.textContent);
+      
+      switch(type) {
+        case 'learned':
+          learned += change;
+          learnedCountEl.textContent = `${learned}/206`;
+          // 更新进度条
+          const progressBar = document.querySelector('.bg-primary.h-2.5');
+          progressBar.style.width = `${(learned/206)*100}%`;
+          document.querySelector('[data-i18n="overall-progress"]').textContent = 
+            `${translations[currentLang]["overall-progress"].split(':')[0]}: ${Math.round((learned/206)*100)}%`;
+          break;
+        case 'today':
+          today += change;
+          todayCountEl.textContent = today;
+          break;
+        case 'saved':
+          saved += change;
+          savedCountEl.textContent = saved;
+          break;
+      }
+    }
+    
+    // 更新测验统计
+    function updateQuizStats(isCorrect) {
+      quizStats.total++;
+      if (isCorrect) {
+        quizStats.correct++;
+        quizStats.streak++;
+      } else {
+        quizStats.streak = 0;
+      }
+      
+      const accuracy = Math.round((quizStats.correct / quizStats.total) * 100);
+      
+      totalQuizzesEl.textContent = quizStats.total;
+      correctAnswersEl.textContent = quizStats.correct;
+      accuracyEl.textContent = `${accuracy}%`;
+      
+      // 更新图表
+      if (progressChart) {
+        const todayIndex = new Date().getDay() || 7; // 调整周日为索引6
+        progressChart.data.datasets[0].data[todayIndex - 1] += isCorrect ? 1 : 0;
+        progressChart.update();
+      }
+    }
+    
+    // 切换模式
+    studyModeBtn.addEventListener('click', () => {
+      if (currentMode === 'study') return;
+      
+      currentMode = 'study';
+      studyModeBtn.classList.remove('btn-secondary');
+      studyModeBtn.classList.add('btn-primary');
+      quizModeBtn.classList.remove('btn-primary');
+      quizModeBtn.classList.add('btn-secondary');
+      studyMode.classList.remove('hidden');
+      quizMode.classList.add('hidden');
+      displayCurrentBone();
+    });
+    
+    quizModeBtn.addEventListener('click', () => {
+      if (currentMode === 'quiz') return;
+      
+      currentMode = 'quiz';
+      quizModeBtn.classList.remove('btn-secondary');
+      quizModeBtn.classList.add('btn-primary');
+      studyModeBtn.classList.remove('btn-primary');
+      studyModeBtn.classList.add('btn-secondary');
+      quizMode.classList.remove('hidden');
+      studyMode.classList.add('hidden');
+      setupQuiz();
+    });
+    
+    // 设置测验
+    function setupQuiz() {
+      // 根据当前区域筛选骨骼
+      let filteredBones = currentRegion === 'all' 
+        ? bones 
+        : bones.filter(bone => bone.category === currentRegion);
+      
+      // 随机选择一个骨骼作为问题
+      const questionBone = filteredBones[Math.floor(Math.random() * filteredBones.length)];
+      currentBoneIndex = bones.indexOf(questionBone);
+      
+      // 设置图片
+      quizBoneImage.src = `https://picsum.photos/id/${questionBone.imageId}/800/600`;
+      
+      // 生成选项（包括正确答案和3个干扰项）
+      generateQuizOptions(questionBone);
+      
+      // 重置状态
+      selectedQuizOption = null;
+      quizFeedback.classList.add('hidden');
+      checkAnswerBtn.classList.remove('hidden');
+      nextQuizBtn.classList.add('hidden');
+    }
+    
+    // 生成测验选项
+    function generateQuizOptions(correctBone) {
+      quizOptions.innerHTML = '';
+      
+      // 收集所有可能的干扰项
+      const allOptions = [correctBone];
+      
+      // 添加3个干扰项
+      while (allOptions.length < 4) {
+        const randomBone = bones[Math.floor(Math.random() * bones.length)];
+        // 确保不重复
+        if (!allOptions.some(option => option.latin === randomBone.latin)) {
+          allOptions.push(randomBone);
+        }
+      }
+      
+      // 随机排序选项
+      allOptions.sort(() => Math.random() - 0.5);
+      
+      // 创建选项按钮
+      allOptions.forEach((bone, index) => {
+        const optionBtn = document.createElement('button');
+        optionBtn.className = 'option-btn';
+        optionBtn.dataset.index = index;
+        optionBtn.dataset.correct = bone.latin === correctBone.latin;
+        optionBtn.innerHTML = `
+          <span class="font-latin font-medium">${bone.latin}</span>
+          <span class="block text-sm text-gray-600">${bone.common[currentLang]}</span>
+        `;
+        
+        optionBtn.addEventListener('click', () => {
+          // 清除之前的选择
+          document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.classList.remove('border-primary', 'bg-primary/5');
+          });
+          
+          // 设置当前选择
+          optionBtn.classList.add('border-primary', 'bg-primary/5');
+          selectedQuizOption = optionBtn;
+        });
+        
+        quizOptions.appendChild(optionBtn);
+      });
+    }
+    
+    // 更新测验选项文本（语言切换时）
+    function updateQuizOptionsText() {
+      const options = document.querySelectorAll('.option-btn');
+      options.forEach(option => {
+        const latinName = option.querySelector('.font-latin').textContent;
+        const bone = bones.find(b => b.latin === latinName);
+        if (bone) {
+          option.querySelector('.text-gray-600').textContent = bone.common[currentLang];
+        }
+      });
+    }
+    
+    // 检查答案
+    checkAnswerBtn.addEventListener('click', () => {
+      if (!selectedQuizOption) return;
+      
+      const isCorrect = selectedQuizOption.dataset.correct === 'true';
+      const correctBone = bones[currentBoneIndex];
+      
+      // 显示反馈
+      quizFeedback.classList.remove('hidden');
+      feedbackText.textContent = isCorrect 
+        ? translations[currentLang]['correct'] 
+        : `${translations[currentLang]['incorrect']}, ${translations[currentLang]['correct-answer']}:`;
+      feedbackText.className = isCorrect 
+        ? 'text-center text-green-600' 
+        : 'text-center text-red-600';
+      correctAnswer.textContent = correctBone.latin;
+      answerTranslation.textContent = correctBone.common[currentLang];
+      
+      // 高亮正确和错误选项
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        if (btn.dataset.correct === 'true') {
+          btn.classList.add('correct');
+        } else if (btn === selectedQuizOption) {
+          btn.classList.add('incorrect');
+        }
+      });
+      
+      // 更新统计
+      updateQuizStats(isCorrect);
+      
+      // 切换按钮
+      checkAnswerBtn.classList.add('hidden');
+      nextQuizBtn.classList.remove('hidden');
+    });
+    
+    // 下一题
+    nextQuizBtn.addEventListener('click', () => {
+      loadNewBone();
+    });
+    
+    // 移动端菜单切换
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 骨骼区域筛选
+    boneRegionBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 更新按钮状态
+        boneRegionBtns.forEach(b => b.classList.remove('bg-primary/10', 'border-primary'));
+        btn.classList.add('bg-primary/10', 'border-primary');
+        
+        // 设置当前区域
+        currentRegion = btn.dataset.region;
+        
+        // 加载新骨骼
+        loadNewBone();
+      });
+    });
+    
+    // 初始化页面
+    function init() {
+      displayCurrentBone();
+      initChart();
+    }
+    
+    // 语言切换事件
+    langZhBtn.addEventListener('click', () => switchLanguage('zh'));
+    langEnBtn.addEventListener('click', () => switchLanguage('en'));
+    
+    // 初始化
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
